@@ -1,0 +1,12 @@
+<%-
+  validate_variable :properties
+-%>
+<%- properties.each do |prop| -%>
+  <%- if prop.get(:type) == :reference -%>
+<%= Mell.render "reference_property", property: prop -%>
+
+  <%- else -%>
+<%= Mell.render "property", property: prop -%>
+
+  <%- end -%>
+<%- end -%>

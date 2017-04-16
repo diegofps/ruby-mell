@@ -1,0 +1,5 @@
+/gen/*
+.byebug_history
+Gemfile.lock
+/tmp/*
+/olds/*
