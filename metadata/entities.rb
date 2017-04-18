@@ -1,35 +1,4 @@
-
-cliente  = { name: :Cliente,  plural: :Clientes  }
-compra   = { name: :Compra,   plural: :Compras   }
-shopping = { name: :Shopping, plural: :Shoppings }
-produto  = { name: :Produto,  plural: :Produtos  }
-
-shopping[:properties] = [
-    { name: :Id, type: :int, pk: true, autoincrement: true },
-    { name: :Nome, type: :string }
-]
-
-cliente[:properties] = [
-    { name: :Id, type: :int, pk: true, autoincrement: true },
-    { name: :Nome, type: :string, len: 20 },
-    { name: :Compras, type: :reference, hasMany: compra }
-]
-
-produto[:properties] = [
-    { name: :Id, type: :int, pk: true, autoincrement: true },
-    { name: :Nome, type: :string, len: 128 },
-    { name: :Compras, type: :reference, hasMany: compra }
-]
-
-compra[:properties] = [
-    { name: :Produto, type: :reference, hasOne: produto, pk: true },
-    { name: :Cliente, type: :reference, hasOne: cliente, pk: true },
-    { name: :Quantidade, type: :int, required: true },
-    { name: :Valor, type: :double, required: true }
-]
-
-=begin
-Metadata.facts do
+facts do
 
     model 'Shopping' do
         plural 'Shoppings'
@@ -42,7 +11,7 @@ Metadata.facts do
             type 'string'
         end
     end
-    
+
     model 'Produto' do
         plural 'Produtos'
         property 'Id' do
@@ -58,8 +27,8 @@ Metadata.facts do
             hasMany 'Compras'
         end
     end
-    
-    
+
+
     model 'Cliente' do
         plural 'Clientes'
         property 'Id' do
@@ -75,8 +44,8 @@ Metadata.facts do
             hasMany 'Compras'
         end
     end
-    
-    
+
+
     model 'Compra' do
         plural 'Compras'
         property 'Produto' do
@@ -94,28 +63,50 @@ Metadata.facts do
             required
         end
         property 'Valor' do
-            type: 'double'
+            type 'double'
             required
         end
     end
 
+
+    father 'Arnaldo', 'Diego'
+    mother 'Elenice', 'Diego'
+
+    father 'Arnaldo', 'Aline'
+    mother 'Elenice', 'Aline'
+
+    mother 'Aline', 'Kiron'
+    father 'Fernando', 'Kiron'
+
+    father 'Augusto', 'Fernando'
+    mother 'Augusta', 'Fernando'
+
 end
 
-Metadata.rules do 
-    
+rules do
+
+    requires_constructor :model do
+        hasMany :model, :prop, :others
+    end
+
     parent :x, :y do
         father :x, :y
     end
-    
+
     parent :x, :y do
         mother :x, :y
     end
-    
+
 end
 
-
-Metadata.property('Shopping', :x).each do |m, x|
-    
+query.hasMany(:m, :x, :y).each do |m, x, y|
+  puts "HasMany: #{m}, #{x}, #{y}"
 end
 
-=end
+query.property('Shopping', :x).each do |x|
+    puts x
+end
+
+query.parent(:x, :y).father(:y, 'Kiron').each do |x, y|
+    puts "x:" + x + ", y:" + y
+end

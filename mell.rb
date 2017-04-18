@@ -6,9 +6,19 @@ require "i18n"
 require 'trie'
 require 'erb'
 
-Metadata = Logic.new
-
 I18n.enforce_available_locales = false
+
+def query(&block)
+  Mell.metadata.query(&block)
+end
+
+def rules(&block)
+  Mell.metadata.rules(&block)
+end
+
+def facts(&block)
+  Mell.metadata.facts(&block)
+end
 
 class MellError < StandardError
 end
@@ -25,7 +35,7 @@ end
 
 module Mell
 
-  def self.get_binding(__params)
+  def get_binding(__params)
     bind = binding
     __params.each do |key, value|
       bind.local_variable_set(key, value)
@@ -33,7 +43,7 @@ module Mell
     bind
   end
 
-  def self.get_filepath(filename)
+  def get_filepath(filename)
     unless defined? @filepaths and @filepaths != nil
       @filepaths = Trie.new
       Dir.glob('**/*.erb').each do |filepath|
@@ -52,7 +62,13 @@ module Mell
     end
   end
 
+  @metadata = Logic.new
+
   module_function
+
+  def metadata
+    @metadata
+  end
 
   def cammel_case(name)
     I18n.locale = :en
@@ -71,7 +87,7 @@ module Mell
   def render(filename, params=nil)
     template_stack
     begin
-      filepath = Mell.get_filepath(filename)
+      filepath = get_filepath(filename)
       input = File.read(filepath)
       template_stack << filepath
       result = ERB.new(input, nil, '-').result(get_binding(params))
@@ -87,14 +103,6 @@ module Mell
       end
       raise MellError, "Could not finish rendering: " + e.message
     end
-  end
-
-  def self.push_template(name)
-    template_stack << name
-  end
-
-  def self.pop_stack
-
   end
 
   def template_stack

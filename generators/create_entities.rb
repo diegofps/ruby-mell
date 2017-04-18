@@ -1,6 +1,8 @@
-load './mell.rb'
-load './metadata/entities.rb'
+require './mell.rb'
+include Mell
 
-Metadata.model(:entity).each do |entity|
-  Mell.render_to_file 'class', "./gen/models/#{entity.get(:name)}.cs", entity: entity
+require './metadata/entities.rb'
+
+query.model(:entity).each do |entity|
+  render_to_file 'model', "./gen/models/#{entity}.cs", entity: entity
 end
