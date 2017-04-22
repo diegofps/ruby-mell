@@ -7,12 +7,12 @@ public class <%= entity %>
 
     public <%= entity -%>()
     {
-  <%- query.hasMany(entity, :prop, :plural).plural(:other, :plural).each do |prop, plural, other| -%>
+  <%- query.hasMany(entity, :prop, :plural).plural(:other, :plural) do |prop, plural, other| -%>
         <%= plural %> = new List<<%= other %>>();
   <%- end -%>
     }
 <% end -%>
-<%- query.type(entity, :prop, :type).each do |prop, type| -%>
+<%- query.type(entity, :prop, :type) do |prop, type| -%>
   <%- if type == 'reference' -%>
 
     public int <%= prop %>Id { get; set; }

@@ -73,8 +73,9 @@ class LogicQuery
         return false
     end
 
-    def method_missing(name, *args)
+    def method_missing(name, *args, &block)
         @rules << LogicRule.new(@env, self, name, args)
+        each &block unless block.nil?
         self
     end
 

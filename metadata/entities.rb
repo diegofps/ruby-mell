@@ -99,14 +99,14 @@ rules do
 
 end
 
-query.hasMany(:m, :x, :y).each do |m, x, y|
+query.hasMany(:m, :x, :y) do |m, x, y|
   puts "HasMany: #{m}, #{x}, #{y}"
 end
 
-query.property('Shopping', :x).each do |x|
+query.property('Shopping', :x) do |x|
     puts x
 end
 
-query.parent(:x, :y).father(:y, 'Kiron').each do |x, y|
+query.parent(:x, :y).father(:y, 'Kiron') do |x, y|
     puts "x:" + x + ", y:" + y
 end
