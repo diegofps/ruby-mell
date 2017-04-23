@@ -9,6 +9,7 @@ facts do
         end
         property 'Nome' do
             type 'string'
+            hasIndex
         end
     end
 
@@ -21,6 +22,7 @@ facts do
         end
         property 'Nome' do
             type 'string'
+            isUnique
         end
         property 'Compras' do
             type 'reference'
@@ -97,16 +99,4 @@ rules do
         mother :x, :y
     end
 
-end
-
-query.hasMany(:m, :x, :y) do |m, x, y|
-  puts "HasMany: #{m}, #{x}, #{y}"
-end
-
-query.property('Shopping', :x) do |x|
-    puts x
-end
-
-query.parent(:x, :y).father(:y, 'Kiron') do |x, y|
-    puts "x:" + x + ", y:" + y
 end

@@ -1,10 +1,13 @@
 require 'debug_inspector'
 require 'ruby-prolog'
-require './logic.rb'
+require 'fileutils'
 require 'byebug'
 require "i18n"
 require 'trie'
 require 'erb'
+
+require './mellparser.rb'
+require './logic.rb'
 
 I18n.enforce_available_locales = false
 
@@ -37,28 +40,29 @@ module Mell
 
   def get_binding(__params)
     bind = binding
-    __params.each do |key, value|
-      bind.local_variable_set(key, value)
-    end
+    __params.each { |key, value| bind.local_variable_set(key, value) }
     bind
   end
 
   def get_filepath(filename)
     unless defined? @filepaths and @filepaths != nil
       @filepaths = Trie.new
-      Dir.glob('**/*.erb').each do |filepath|
+      Dir.glob('**/*.mell.rb').each do |filepath|
         @filepaths.add(filepath.reverse)
       end
     end
 
-    children = @filepaths.children("/#{filename}.erb".reverse)
+    children = @filepaths.children("/#{filename}.mell.rb".reverse)
 
     if children.length == 1
       return children.first.reverse
+
     elsif children.length == 0
       raise ArgumentError, "Template '#{filename}' was not found"
+
     else
       raise ArgumentError, "Ambiguous template for '#{filename}', candidates: #{children.map {|x| x.reverse}}"
+
     end
   end
 
@@ -75,7 +79,7 @@ module Mell
     I18n.transliterate(name.to_s).split(/\s+/).collect(&:capitalize).join
   end
 
-  def validate_variable(name)
+  def validate_presence(name)
     RubyVM::DebugInspector.open do |inspector|
       bind = inspector.frame_binding(2)
       unless bind.local_variable_defined? name
@@ -84,13 +88,14 @@ module Mell
     end
   end
 
-  def render(filename, params=nil)
+  def render(template, params=nil)
     template_stack
     begin
-      filepath = get_filepath(filename)
+      filepath = get_filepath(template)
       input = File.read(filepath)
       template_stack << filepath
-      result = ERB.new(input, nil, '-').result(get_binding(params))
+      #result = ERB.new(input, nil, '-').result(get_binding(params))
+      result = MellParser.result(input, get_binding(params))
       template_stack.pop
       result
     rescue Exception => e
@@ -112,13 +117,14 @@ module Mell
     @template_stack
   end
 
-  def render_with_indent(filename, size, params=nil)
-    render(filename, params).gsub(/^/, ' ' * size)
+  def render_with_indent(template, size, params=nil)
+    render(template, params).gsub(/^/, ' ' * size)
   end
 
-  def render_to_file(filenameIn, filenameOut, params=nil)
+  def render_to_file(template, filenameOut, params=nil)
+    FileUtils::mkdir_p(File.dirname(filenameOut))
     File.open(filenameOut, 'w') do |f|
-      f.write render(filenameIn, params)
+      f.write render(template, params)
     end
   end
 
