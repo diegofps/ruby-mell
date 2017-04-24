@@ -26,10 +26,20 @@ namespace TK_OSS.Data.Configuration
 
             @end
           @end
+          @query.plural(model, :plural).hasMany(:other, :prop_name, :plural) do |other, prop_name, plural|
+            HasRequired(x => x.%(other))
+                .WithMany(y => y.%(prop_name))
+                .HasForeignKey(x => x.%(other)Id)
+            @if query.cascadeDelete(other, prop_name).valid?
+                .WillCascadeOnDelete(true)
+            @else
+                .WillCascadeOnDelete(false)
+            @end
+            @!;
+          @end
+
           @{
             #Property(x => x.Nome).HasMaxLength(50);
-
-            #HasRequired(x=> x.Cidade).WithMany(cid => cid.Bairros).HasForeignKey(x => x.CidadeId).WillCascadeOnDelete(false);
           }
           @!
         }
