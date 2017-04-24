@@ -10,6 +10,26 @@ facts do
             type 'string'
             hasIndex
         end
+        property 'Lojas' do
+          type 'reference'
+          hasMany 'Lojas'
+        end
+    end
+
+    model 'Loja' do
+      plural 'Lojas'
+      property 'Id' do
+        type 'int'
+        pk
+      end
+      property 'Nome' do
+        type 'string'
+        isUnique
+      end
+      property 'Produtos' do
+        type 'reference'
+        hasMany 'Produtos'
+      end
     end
 
     model 'Produto' do
@@ -22,6 +42,10 @@ facts do
             type 'string'
             isUnique
         end
+        property 'Compras' do
+          type 'reference'
+          hasMany 'Compras'
+        end
     end
 
     model 'Cliente' do
@@ -33,20 +57,14 @@ facts do
         property 'Nome' do
             type 'string'
         end
+        property 'Compras' do
+          type 'reference'
+          hasMany 'Compras'
+        end
     end
 
     model 'Compra' do
         plural 'Compras'
-        property 'Produto' do
-            type 'reference'
-            hasOne
-            pk
-        end
-        property 'Cliente' do
-            type 'reference'
-            hasOne
-            pk
-        end
         property 'Quantidade' do
             type 'int'
             required

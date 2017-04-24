@@ -16,18 +16,32 @@ namespace TK_OSS.Model
         }
 
 @end
-@query.type(model, :prop, :type) do |prop, type|
+@query.type(model, :prop_name, :type) do |prop_name, type|
   @if type == 'reference'
-    @query.plural(:other, prop) do |other|
-        public int %(prop)Id { get; set; }
+    @query.hasMany(model, prop_name, :other_plural).plural(:other, :other_plural) do |other_plural, other|
+        public virtual List<%(other)> %(prop_name) { get; set; }
 
-        public virtual List<%(other)> %(prop) { get; set; }
+    @end
+    @query.hasOne(model, prop_name, :other) do |other|
+        public virtual %(other) %(prop_name) { get; set; }
 
     @end
   @else
-        public %(type) %(prop) { get; set; }
+        public %(type) %(prop_name) { get; set; }
 
   @end
+@end
+@query.plural(model, :plural).hasMany(:other, :prop_name, :plural) do |plural, other, prop_name|
+        public virtual %(other) %(other) { get; set; }
+
+        public int? %(other)Id { get; set; }
+
+@end
+@query.hasOne(:other, :prop_name, model) do |other, prop_name|
+        public virtual %(other) %(other) { get; set; }
+
+        public int? %(other)Id { get; set; }
+
 @end
 @!
     }
