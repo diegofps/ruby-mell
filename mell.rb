@@ -2,7 +2,7 @@ require 'debug_inspector'
 require 'ruby-prolog'
 require 'fileutils'
 require 'byebug'
-require "i18n"
+require 'i18n'
 require 'trie'
 require 'erb'
 
@@ -10,6 +10,23 @@ require './mellparser.rb'
 require './logic.rb'
 
 I18n.enforce_available_locales = false
+
+module Config
+  module_function
+  def method_missing name, params=nil
+    if name.to_s.end_with? "="
+      realname = '@' + name.slice(0,name.length-1)
+      return self.instance_variable_set(realname, params)
+    end
+
+    localname = '@' + name.to_s
+    if instance_variable_defined? localname
+      return self.instance_variable_get localname
+    end
+
+    nil
+  end
+end
 
 def query(&block)
   Mell.metadata.query(&block)

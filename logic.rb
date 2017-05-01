@@ -46,9 +46,7 @@ class LogicQuery
         @env = env
     end
 
-    def each
-        goals = @rules.map {|x| x.to_prolog}
-
+    def find_vars(goals)
         vars_list = []
         goals.each_with_index do |g, ig|
             g.args.each_with_index do |a, ia|
@@ -58,6 +56,12 @@ class LogicQuery
             end
         end
         vars_list.uniq { |x| x[0] }
+        vars_list
+    end
+
+    def each
+        goals = @rules.map {|x| x.to_prolog}
+        vars_list = find_vars(goals)
 
         @env.resolve(*goals) do |env|
             result = env[goals]
@@ -71,6 +75,31 @@ class LogicQuery
             return true
         end
         return false
+    end
+
+    def first
+      each do |x|
+        return x
+      end
+      nil
+    end
+
+    def first!(&block)
+      goals = @rules.map {|x| x.to_prolog}
+      vars_list = find_vars(goals)
+
+      if block.nil?
+        each do |x|
+          return x
+        end
+      else
+        @env.resolve(*goals) do |env|
+            result = env[goals]
+            yield *vars_list.map { |x| result[x[1]].args[x[2]] }
+            return
+        end
+      end
+      raise LogicError, "First returned null"
     end
 
     def method_missing(name, *args, &block)

@@ -12,7 +12,7 @@ namespace TK_OSS.Model
         {
   @query.hasMany(model, :prop, :plural).plural(:other, :plural) do |prop, plural, other|
             %(plural) = new List<%(other)>();
-  @end
+@end
         }
 
 @end

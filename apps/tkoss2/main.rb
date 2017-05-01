@@ -1,5 +1,7 @@
 facts do
 
+    project_name 'TK_OSS'
+
     model 'Shopping' do
         plural 'Shoppings'
         property 'Id' do
@@ -89,6 +91,9 @@ facts do
     mother 'Augusta', 'Fernando'
 
 end
+
+#if.hasMany(:model, :prop, :others).plural(:model, :plur).
+#  then.requires_constructor(:model, :plur)
 
 rules do
 
