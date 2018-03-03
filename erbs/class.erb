@@ -1,9 +1,0 @@
-<%-
-    validate_variable :entity
--%>
-public class <%= entity.get(:name) %>
-{
-
-<%= Mell.render_with_indent 'model_constructor', 4, entity: entity %>
-<%= Mell.render_with_indent 'model_properties', 4, properties: entity.get(:properties) %>
-}

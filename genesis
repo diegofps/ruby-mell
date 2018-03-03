@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+#require "pry-byebug"
+require "./mell.rb"
+include Mell
+
+def create
+  Domain.concept_name is ARGV.length >= 1 ? ARGV[0] : nil
+  Domain.design_name is ARGV.length >= 2 ? ARGV[1] : nil
+  Domain.app_root is ARGV.length >= 3 ? ARGV[2] : "#{Dir.pwd}/apps/#{Domain.concept_name}"
+
+  if Domain.concept_name.nil? || Domain.design_name.nil?
+    sintax
+    return
+  else
+    require "#{Dir.pwd}/designs/#{Domain.design_name}/definitions.rb"
+    require "#{Dir.pwd}/concepts/#{Domain.concept_name}/app.rb"
+    require "#{Dir.pwd}/designs/#{Domain.design_name}/generate.rb"
+  end
+end
+
+def sintax
+  puts "Commands:"
+  puts "\tcreate <CONCEPT_NAME> <DESIGN_NAME> <OUTPUT_FOLDER=./apps/CONCEPT_NAME>"
+end
+
+def main
+  if ARGV.length == 0
+    sintax
+    return
+  end
+
+  create
+end
+
+main

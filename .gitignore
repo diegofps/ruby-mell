@@ -1,4 +1,5 @@
 /gen/*
+/apps/*
 .byebug_history
 Gemfile.lock
 /tmp/*
