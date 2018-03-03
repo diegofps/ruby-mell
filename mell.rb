@@ -1,16 +1,19 @@
 require 'debug_inspector'
-require 'ruby-prolog'
+#require 'ruby-prolog'
 require 'fileutils'
 require 'byebug'
 require 'i18n'
 require 'trie'
-require 'erb'
+#require 'erb'
 
 require './mellparser.rb'
-require './logic.rb'
+require './metadata.rb'
+#require './logic.rb'
 
+Domain = Metadata.new
 I18n.enforce_available_locales = false
 
+=begin
 module Config
   module_function
   def method_missing name, params=nil
@@ -38,6 +41,15 @@ end
 
 def facts(&block)
   Mell.metadata.facts(&block)
+end
+
+=end
+
+class String
+  def camel
+    I18n.locale = :en
+    I18n.transliterate(self).split(/\s+/).collect(&:capitalize).join
+  end
 end
 
 class MellError < StandardError
@@ -82,7 +94,7 @@ module Mell
 
     end
   end
-
+=begin
   @metadata = Logic.new
 
   module_function
@@ -90,8 +102,11 @@ module Mell
   def metadata
     @metadata
   end
+=end
+module_function
 
   def cammel_case(name)
+    #byebug if name.class == Symbol
     I18n.locale = :en
     I18n.transliterate(name.to_s).split(/\s+/).collect(&:capitalize).join
   end

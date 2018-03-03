@@ -97,16 +97,12 @@ end
 
 rules do
 
-    requires_constructor :model do
-        hasMany :model, :prop, :others
-    end
+  parent :x, :y do
+    father :x, :y
+  end
 
-    parent :x, :y do
-        father :x, :y
-    end
-
-    parent :x, :y do
-        mother :x, :y
-    end
+  parent :x, :y do
+    mother :x, :y
+  end
 
 end
